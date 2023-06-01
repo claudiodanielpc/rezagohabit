@@ -35,11 +35,10 @@ censo<-read.csv("D:/Viviendas00.csv")%>%
                           TRUE ~ "Fuera de rezago"))
 
 #Cuantificación
-censo%>%
+censo %>%
   #Diseño muestral
-  as_survey(weights=factor
-  )%>%
-  #Estimación puntual
+  as_survey_design( weights=factor)%>%
   group_by(rezago)%>%
-  summarise(viviendas=survey_total(vartype="cv"))%>%
-  ungroup()
+  summarise(
+   viviendas=survey_total(vartype = "cv"))%>%
+   ungroup()
