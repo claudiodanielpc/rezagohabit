@@ -5,7 +5,7 @@
 rm(list=ls())
 
 
-#Directorio en mac
+#Directorio
 setwd("Desktop")
 ##Crear folders de almacenamiento
 dir.create("microdatos", showWarnings = F)
@@ -37,8 +37,8 @@ enigh <- read_csv("microdatos/viviendas.csv")%>%
                           ~ "En rezago", 
                           
                           TRUE ~ "Fuera de rezago"),
-         #extraer primero dos caracteres de folioviv si el largo es de 10, si no, extraer el primero y añadir un cero al final  
-          cve_ent=case_when(nchar(folioviv)==10 ~ substr(folioviv,1,2),
+         #Construir clave de entidad federativa
+                   cve_ent=case_when(nchar(folioviv)==10 ~ substr(folioviv,1,2),
                               nchar(folioviv)==9 ~ paste0(substr(folioviv,1,1),"0"),
                               TRUE ~ folioviv),
         #Crear nom_ent a partir de cve_ent
