@@ -15,11 +15,11 @@ if(!require('pacman')) install.packages('pacman')
 pacman::p_load(tidyverse,srvyr, gt)
 
 #url enigh
-url_enigh <- "https://www.inegi.org.mx/contenidos/programas/enigh/nc/2020/microdatos/enigh2020_ns_viviendas_csv.zip"
+url_enigh <- "https://www.inegi.org.mx/contenidos/programas/enigh/nc/2022/microdatos/enigh2022_ns_viviendas_csv.zip"
 
 #Descargar y descomprimir
-download.file(url_enigh, destfile = "microdatos/enigh2020_ns_viviendas_csv.zip")
-unzip("microdatos/enigh2020_ns_viviendas_csv.zip", exdir = "microdatos")
+download.file(url_enigh, destfile = "microdatos/enigh2022_ns_viviendas_csv.zip")
+unzip("microdatos/enigh2022_ns_viviendas_csv.zip", exdir = "microdatos")
 
 #Cargar datos
 enigh <- read_csv("microdatos/viviendas.csv")%>%
@@ -92,7 +92,7 @@ enigh%>%
     mutate(viviendas=scales::comma(viviendas, big.mark = ","))%>%
   #Tabla
     gt()%>%
-    tab_header(title=md("**Rezago habitacional en México**"),
+    tab_header(title=md("**Rezago habitacional en México, 2022**"),
                  subtitle=md("*(Número de viviendas y porcentaje)*"),
                  )%>%
     cols_label(rezago=md("**Condición**"),
@@ -100,11 +100,13 @@ enigh%>%
                 pct=md("**Porcentaje**"))%>%
     cols_align(align="center")%>%
     tab_source_note(
-      md("Fuente: @claudiodanielpc con datos de la ENIGH 2020."))%>%
+      md("Fuente: @claudiodanielpc con datos de la ENIGH 2022."))%>%
       #Eliminar bordes arriba y abajo
       tab_options(table.border.top.width = px(0),
                   table.border.bottom.width = px(0))%>%
-  tab_options(column_labels.background.color = "#F039B1")
+  tab_options(column_labels.background.color = "#F039B1")%>%
+  #Salvar tabla
+  gtsave("rezago2022.png")
 
 
 
@@ -123,16 +125,16 @@ enigh%>%
     filter(rezago=="En rezago")%>%
     #Gráfica de barras horizontal con porcentaje
     ggplot(aes(x=reorder(nom_ent,pct),y=pct))+
-    geom_col(fill="#0AF6EE")+
+    geom_col(fill="#a0c6e0")+
     geom_text(aes(label=paste0(pct,"%")),hjust=-.1, size=5)+
-    labs(x="",y="",title="Rezago habitacional por entidad federativa",
-         subtitle="Porcentaje de viviendas en rezago habitacional respecto al total en cada entidad federativa",
-         caption="Fuente: @claudiodanielpc con datos de la ENIGH 2020.")+
+    labs(x="",y="",title="Rezago habitacional por entidad federativa, 2022",
+         subtitle="(Porcentaje de viviendas en rezago habitacional respecto al total en cada entidad federativa)",
+         caption="Fuente: @claudiodanielpc con datos de la ENIGH 2022.")+
     theme_minimal()+
-    theme(plot.title = element_text(size=16, face="bold",hjust=0),
-          plot.subtitle = element_text(size=14, face="italic",hjust=0),
+    theme(plot.title = element_text(size=20, face="bold",hjust=0),
+          plot.subtitle = element_text(size=16, face="italic",hjust=0),
           plot.caption = element_text(size=11,hjust=0),
-          axis.text.y = element_text(size=12),
+          axis.text.y = element_text(size=13),
           axis.text.x = element_blank(),
           axis.ticks.x = element_blank(),
           axis.title.x = element_blank(),
@@ -147,4 +149,4 @@ enigh%>%
     coord_flip()
 
     #GUARDAR GRÁFICA
-    ggsave("rezago_entidad.png", width = 10, height = 6, units = "in", dpi = "retina")
+    ggsave("rezago_entidad2022.png", width = 20, height = 10)
