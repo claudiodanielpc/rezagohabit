@@ -150,3 +150,31 @@ enigh%>%
 
     #GUARDAR GRÁFICA
     ggsave("rezago_entidad2022.png", width = 20, height = 10)
+
+enigh%>%
+  #Diseño muestral
+  as_survey(weights=factor, strata=est_dis, ids=upm)%>%
+  filter(rezago=="En rezago")%>%
+  mutate(tenencia=case_when(tenencia==1 ~ "Rentada",
+                            tenencia==2 ~ "Prestada",
+                            tenencia==3 ~ "Propia y la está pagando",
+                            tenencia==4 ~ "Propia",
+                            tenencia==5 ~ "Intestada o en litigio",
+                            tenencia==6 ~ "Otra situación"))%>%
+
+  #Estimación puntual
+  group_by(rezago,tenencia)%>%
+  summarise(pct=round(survey_prop(
+    vartype = "cv")*100,1))%>%
+  ungroup()%>%
+  #Ordenar de mayor a menor
+  arrange(desc(pct))
+
+
+  enigh%>%
+  #Maximo y minimo de renta
+  filter(tenencia==1)%>%
+  summarise(max=max(renta),
+            min=min(renta))
+#btener directorio de trabajo
+getwd()
