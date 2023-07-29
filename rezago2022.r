@@ -49,7 +49,7 @@ enigh <- read_csv("microdatos/viviendas.csv")%>%
                           cve_ent=="05" ~ "Coahuila de Zaragoza",
                           cve_ent=="06" ~ "Colima",
                           cve_ent=="07" ~ "Chiapas",
-                          cve_ent=="08" ~ "Chihuahua",
+                          cve_ent=="08" ~ "Chihuahua",s
                           cve_ent=="09" ~ "Ciudad de México",
                           cve_ent=="10" ~ "Durango",
                           cve_ent=="11" ~ "Guanajuato",
