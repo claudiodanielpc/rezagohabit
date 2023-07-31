@@ -374,7 +374,6 @@ dm%>%
 
 
 dm%>%
-  #Rezago habitacional por entidad federativa
   filter(rezago=="En rezago" & !is.na(tipo_adqui))%>%
   #Estimación puntual
   group_by(tipo_adqui,rezago)%>%
