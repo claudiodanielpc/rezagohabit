@@ -16,6 +16,7 @@ pacman::p_load(tidyverse,srvyr, gt, showtext)
 font_add_google("Poppins", "pop")
 showtext_auto()
 
+#Función para descargar y unzip
 download_and_unzip <- function(url, dir) {
   # Crear directorio si no existe
   if (!dir.exists(dir)) {
@@ -32,30 +33,31 @@ download_and_unzip <- function(url, dir) {
   unzip(destfile, exdir = dir)
 }
 
-# Use the function to download and unzip data
+# Utiliza la función para descargar datos 2022 y 2020 de ENIGH
 download_and_unzip("https://www.inegi.org.mx/contenidos/programas/enigh/nc/2022/microdatos/enigh2022_ns_viviendas_csv.zip", "microdatos")
 download_and_unzip("https://www.inegi.org.mx/contenidos/programas/enigh/nc/2020/microdatos/enigh2020_ns_viviendas_csv.zip", "data_2020")
 
-# Define function
+
+#Función para cargar datos
 load_data <- function(file_path) {
   df <- read_csv(file_path) %>%
     janitor::clean_names() %>%
-    # Convert to numeric
+    # Se transforman a numéricos
     mutate(mat_pared = as.numeric(mat_pared),
            mat_pisos = as.numeric(mat_pisos),
            mat_techos = as.numeric(mat_techos),
-           # Create variable for housing backlog
+           # Crea variable rezago
            rezago = case_when((tot_resid / num_cuarto) > 2.5 | 
                                 mat_pared %in% c(1, 2, 3, 4, 5, 6) | 
                                 mat_pisos %in% c(1) |
                                 mat_techos %in% c(1, 2, 3, 4, 6, 7, 9) |
                                 excusado == 2 ~ "En rezago", 
                                 TRUE ~ "Fuera de rezago"),
-           # Build key for federal entity
+           # clave de entidad federativa
            cve_ent = case_when(nchar(folioviv) == 10 ~ substr(folioviv, 1, 2),
                                nchar(folioviv) == 9 ~ paste0(substr(folioviv, 1, 1), "0"),
                                TRUE ~ folioviv),
-           # Create nom_ent from cve_ent
+           # nom_ent
            nom_ent = case_when(cve_ent == "01" ~ "Aguascalientes",
                                cve_ent == "02" ~ "Baja California",
                                cve_ent == "03" ~ "Baja California Sur",
@@ -92,7 +94,7 @@ load_data <- function(file_path) {
   return(df)
 }
 
-# Use the function
+# Usa la función para cargar datos
 enigh <- load_data("microdatos/viviendas.csv")
 enigh_2020 <- load_data("data_2020/viviendas.csv")
 
@@ -178,11 +180,9 @@ source_notes.font.size = 8
   md("Nota: La variable de estrato socioeconómico fue construida por el INEGI con base en la información de la ENIGH 2022.")
 ) %>%
 tab_source_note(
-  md("Fuente: @claudiodanielpc con datos de la ENIGH 2022.")
+  md("Fuente: @claudiodanielpc con datos de la ENIGH 2022."
 )%>%
-    # tab_source_note(
-    #   md("Nota: La variable de estrato socioeconómica fue construida por el INEGI con base en la información de la ENIGH 2022.\nFuente: @claudiodanielpc con datos de la ENIGH 2022."))%>%
-      #Eliminar bordes arriba y abajo
+
       tab_options(table.border.top.width = px(0),
                   table.border.bottom.width = px(0))%>%
   tab_options(column_labels.background.color = "#F0449C")%>%
